@@ -9,10 +9,13 @@ module Rack
       request = Rack::Request.new(env)
       status, headers, response = @app.call(env)
       
-      response_body = ""
-      response.each { |p| response_body += p }
+      if headers["Content-Type"] == "text/html"
+        response_body = ""
+        response.each { |p| response_body += p }
+        response = [@rules.apply(request, response_body)]
+      end
       
-      [status, headers, [@rules.apply(request, response_body)]]
+      [status, headers, response]
     end
   
     def each(&block)

@@ -6,6 +6,7 @@ class TestRackTrack < Test::Unit::TestCase
   def initialize(x)
     super(x)
     @rules = lambda {}
+    @app_class = SimpleApp
   end
   
   class SimpleApp
@@ -15,7 +16,7 @@ class TestRackTrack < Test::Unit::TestCase
   end
   
   def app
-    Rack::Track.new(SimpleApp.new, &@rules)
+    Rack::Track.new(@app_class.new, &@rules)
   end
   
   def test_defining_pixels_and_areas_with_dsl
@@ -57,5 +58,22 @@ class TestRackTrack < Test::Unit::TestCase
     assert last_response.body.include? "THIS-IS-A-TEST</body>"
     get '/blah/test'
     assert last_response.body.include? "THIS-IS-A-TEST</body>"
+  end
+  
+  def test_only_works_on_html_pages
+    @app_class = Class.new do
+      def call(env)
+        [200, {'Content-Type' => "text/css"}, ["<html><head><title></title></head><body>hello this is the body</body></html>"]]
+      end
+    end
+    
+    @rules = Proc.new do
+      pixel "Test pixel", :on => :all do
+        "FAIL"
+      end
+    end
+    
+    get '/'
+    assert last_response.body != "<html><head><title></title></head><body>hello this is the bodyFAIL</body></html>"
   end
 end
