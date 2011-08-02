@@ -15,12 +15,13 @@ require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "rack-track"
+  gem.version = "0.1.0"
   gem.homepage = "http://github.com/michaelbaldry/rack-track"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
-  gem.email = "michael.baldry@uswitch.com"
-  gem.authors = ["michaelbaldry"]
+  gem.summary = %Q{Taking all the pain away from managing Tracking Pixels}
+  gem.description = %Q{A rack middleware that allows you to define and document tracking pixels in one location}
+  gem.email = "clockwize@gmail.com"
+  gem.authors = ["Michael Baldry"]
   # dependencies defined in Gemfile
 end
 Jeweler::RubygemsDotOrgTasks.new
