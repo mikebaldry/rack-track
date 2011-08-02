@@ -10,9 +10,9 @@ module Rack
       status, headers, response = @app.call(env)
       
       response_body = ""
-      response.each { |p| response_body += part }
+      response.each { |p| response_body += p }
       
-      [status, headers, [@rules.apply(request, response)]]
+      [status, headers, [@rules.apply(request, response_body)]]
     end
   
     def each(&block)
