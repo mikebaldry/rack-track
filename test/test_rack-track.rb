@@ -9,6 +9,12 @@ class TestRackTrack < Test::Unit::TestCase
     @app_class = SimpleApp
   end
   
+  FAIL_RULE = Proc.new do
+    pixel "Test pixel", :on => :all do
+      "FAIL"
+    end
+  end
+  
   class SimpleApp
     def call(env)
       [200, {'Content-Type' => "text/html"}, ["<html><head><title></title></head><body>hello this is the body</body></html>"]]
@@ -67,13 +73,22 @@ class TestRackTrack < Test::Unit::TestCase
       end
     end
     
-    @rules = Proc.new do
-      pixel "Test pixel", :on => :all do
-        "FAIL"
-      end
-    end
+    @rules = FAIL_RULE
     
     get '/'
     assert last_response.body != "<html><head><title></title></head><body>hello this is the bodyFAIL</body></html>"
+  end
+  
+  def test_only_works_on_html_pages_with_charset
+    @app_class = Class.new do
+      def call(env)
+        [200, {'Content-Type' => "text/html; charset=utf-8"}, ["<html><head><title></title></head><body>hello this is the body</body></html>"]]
+      end
+    end
+    
+    @rules = FAIL_RULE
+    
+    get '/'
+    assert last_response.body == "<html><head><title></title></head><body>hello this is the bodyFAIL</body></html>"
   end
 end

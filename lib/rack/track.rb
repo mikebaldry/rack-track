@@ -9,7 +9,7 @@ module Rack
       request = Rack::Request.new(env)
       status, headers, response = @app.call(env)
       
-      if headers["Content-Type"] == "text/html"
+      if /^text\/html/ =~ headers["Content-Type"] 
         response_body = ""
         response.each { |p| response_body += p }
         response = [@rules.apply(request, response_body)]
