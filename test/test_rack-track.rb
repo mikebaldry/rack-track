@@ -91,4 +91,17 @@ class TestRackTrack < Test::Unit::TestCase
     get '/'
     assert last_response.body == "<html><head><title></title></head><body>hello this is the bodyFAIL</body></html>"
   end
+  
+  def test_only_works_on_pages_with_closing_body
+    @app_class = Class.new do
+      def call(env)
+        [200, {'Content-Type' => "text/html; charset=utf-8"}, ["<html><head><title></title></head><body>hello this is the body</html>"]]
+      end
+    end
+    
+    @rules = FAIL_RULE
+    
+    get '/'
+    assert last_response.body == "<html><head><title></title></head><body>hello this is the body</html>"
+  end
 end

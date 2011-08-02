@@ -9,10 +9,10 @@ module Rack
       request = Rack::Request.new(env)
       status, headers, response = @app.call(env)
       
-      if /^text\/html/ =~ headers["Content-Type"] 
+      if /^text\/html/ =~ headers["Content-Type"]
         response_body = ""
         response.each { |p| response_body += p }
-        response = [@rules.apply(request, response_body)]
+        response = [@rules.apply(request, response_body)] if response_body.include? "</body>"
       end
       
       [status, headers, response]
