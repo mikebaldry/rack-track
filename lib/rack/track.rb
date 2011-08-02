@@ -8,7 +8,11 @@ module Rack
     def call(env)
       request = Rack::Request.new(env)
       status, headers, response = @app.call(env)
-      [status, headers, [@rules.apply(request, response.inject("", &:+))]]
+      
+      response_body = ""
+      response.each { |p| response_body += part }
+      
+      [status, headers, [@rules.apply(request, response)]]
     end
   
     def each(&block)
