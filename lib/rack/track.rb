@@ -45,7 +45,7 @@ module Rack
         url = URI::parse(request.url)
         @pixels.each do |p|
           paths = @areas[p.area]
-          response.insert(response.rindex("</body>"), p.content) if p.area == :all || paths.include?(url.path.downcase)
+          response.insert(response.rindex("</body>"), p.content) if [:all_pages, :all].include?(p.area) || paths.include?(url.path.downcase)
         end
         response
       end
