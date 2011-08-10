@@ -4,11 +4,13 @@ On too many projects I've worked on, nobody actually know every tracking pixel w
 becomes a massive headache when you need to do work around them. This is where Rack::Track comes in to play, providing a DSL to define tracking pixels
 and the areas they should appear on. It's all in one place, instead of across layouts and pages and it's self documenting. 
 
+The only option on pixel is :on, where you identify an area of the site to appear on. Other options are ignored, making it useful to track owners, departments etc who 'own' the pixel.
+
 ```ruby
 MyApp::Application.config.middleware.use(Rack::Track) do
   area :confirmation_pages, "/checkout/order_confirmation", "/basket/complete"
   
-  pixel "Generic GA", :on => :all_pages do
+  pixel "Generic GA", :on => :all_pages, :owner => "Anna Lyst" do
     %Q{
       <!-- GOOGLE ANALYTICS --> 
       blah
@@ -16,7 +18,7 @@ MyApp::Application.config.middleware.use(Rack::Track) do
     }
   end
   
-  pixel "Goal GA", :on => :confirmation_pages do
+  pixel "Goal GA", :on => :confirmation_pages, :owner => "Anna Lyst" do
     %Q{
       <!-- GOOGLE ANALYTICS --> 
       blah
@@ -25,6 +27,7 @@ MyApp::Application.config.middleware.use(Rack::Track) do
   end
 end
 ```
+
 These tracking pixels will be inserted in to the page before the body tag closes. This is what most tracking pixels expect. If you require a pixel
 to be placed in the head tag, or anywhere else, let me know and I'll extend it (or you could clone and submit a pull request with your changes!)
 
