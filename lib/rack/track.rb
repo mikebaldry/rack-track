@@ -13,6 +13,7 @@ module Rack
         response_body = ""
         response.each { |p| response_body += p }
         response = [@rules.apply(request, response_body)] if response_body.include? "</body>"
+        headers["Content-Length"] = response.inject{|sum,x| sum + x }
       end
       
       [status, headers, response]
