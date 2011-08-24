@@ -15,7 +15,7 @@ require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "rack-track"
-  gem.version = "0.1.1"
+  gem.version = "0.1.2"
   gem.homepage = "http://github.com/michaelbaldry/rack-track"
   gem.license = "MIT"
   gem.summary = %Q{Taking all the pain away from managing Tracking Pixels}
