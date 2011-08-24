@@ -111,6 +111,6 @@ class TestRackTrack < Test::Unit::TestCase
     @rules = SAMPLE_RULE
     
     get '/'
-    assert_equal 90, last_response.headers["Content-Length"].to_i
+    assert_equal "90", last_response.headers["Content-Length"]
   end
 end
