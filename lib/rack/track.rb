@@ -13,7 +13,7 @@ module Rack
         response_body = ""
         response.each { |p| response_body += p }
         response = [@rules.apply(request, response_body)] if response_body.include? "</body>"
-        headers["Content-Length"] = response.inject(0){|sum,x| sum + x.length }.to_s
+        headers["Content-Length"] = get_length(response)
       end
       p headers
       [status, headers, response]
@@ -23,6 +23,12 @@ module Rack
     end
   
     private
+  
+    def get_length(response)
+      sum_length = 0
+      response.each {|x| sum_length += x.length }
+      sum_length.to_s
+    end
   
     class PixelSet
       Pixel = Struct.new(:name, :area, :content)
