@@ -15,7 +15,6 @@ module Rack
         response = [@rules.apply(request, response_body)] if response_body.include? "</body>"
         headers["Content-Length"] = get_length(response)
       end
-      p headers
       [status, headers, response]
     end
   
@@ -31,7 +30,7 @@ module Rack
     end
   
     class PixelSet
-      Pixel = Struct.new(:name, :area, :content)
+      Pixel = Struct.new(:name, :area, :except, :content)
     
       def initialize(&block)
         @pixels = []
@@ -45,14 +44,19 @@ module Rack
       end
     
       def pixel(name, opts = {}, &block)
-        @pixels << Pixel.new(name, opts[:on], block[])
+        @pixels << Pixel.new(name, opts[:on], opts[:except] ? [opts[:except]].flatten : [], block[])
       end
     
       def apply(request, response)
         url = URI::parse(request.url)
+        p "applying to #{url.path.downcase}"
+        matching_areas = @areas.find_all { |k, a| a.include? url.path.downcase }.collect { |k, v| k }
+        p matching_areas
         @pixels.each do |p|
           paths = @areas[p.area]
-          response.insert(response.rindex("</body>"), p.content) if [:all_pages, :all].include?(p.area) || paths.include?(url.path.downcase)
+          response.insert(response.rindex("</body>"), p.content) if ([:all_pages, :all].include?(p.area) || 
+                                                                    paths.include?(url.path.downcase)) &&
+                                                                    p.except.find_all { |ea| matching_areas.include? ea }.empty?
         end
         response
       end

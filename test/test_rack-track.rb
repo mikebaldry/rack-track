@@ -35,7 +35,7 @@ class TestRackTrack < Test::Unit::TestCase
     end
 
     assert tp.instance_variable_get(:@areas) == {:confirmation => ["business-energy/confirmation", "business-communications/confirmation"]}
-    assert tp.instance_variable_get(:@pixels) == [Rack::Track::PixelSet::Pixel.new("Confirmation (GA)", :confirmation, "THIS IS A GA CONFIRMATION TEST")]
+    assert tp.instance_variable_get(:@pixels) == [Rack::Track::PixelSet::Pixel.new("Confirmation (GA)", :confirmation, [], "THIS IS A GA CONFIRMATION TEST")]
   end
   
   def test_psudo_area_all
@@ -44,6 +44,31 @@ class TestRackTrack < Test::Unit::TestCase
     assert last_response.body.include? "THIS-IS-A-TEST</body>"
     get '/poatoes'
     assert last_response.body.include? "THIS-IS-A-TEST</body>"
+  end
+  
+  def test_area_exclusion
+    @rules = Proc.new do 
+      area :an_area, "/blah", "/blah/test"
+      
+      pixel "Test pixel", :on => :an_area do
+        "THIS-IS-A-TEST"
+      end
+      
+      pixel "All except an_area", :on => :all, :except => :an_area do
+        "ALL-EXCEPT-AN-AREA"
+      end
+    end
+    get '/'
+    assert !last_response.body.include?("THIS-IS-A-TEST")
+    assert last_response.body.include?("ALL-EXCEPT-AN-AREA")
+    
+    get '/blah'
+    assert last_response.body.include?("THIS-IS-A-TEST")
+    assert !last_response.body.include?("ALL-EXCEPT-AN-AREA")
+    
+    get '/blah/test'
+    assert last_response.body.include?("THIS-IS-A-TEST")
+    assert !last_response.body.include?("ALL-EXCEPT-AN-AREA")
   end
   
   def test_area_inclusion
