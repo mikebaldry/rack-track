@@ -49,9 +49,7 @@ module Rack
     
       def apply(request, response)
         url = URI::parse(request.url)
-        p "applying to #{url.path.downcase}"
         matching_areas = @areas.find_all { |k, a| a.include? url.path.downcase }.collect { |k, v| k }
-        p matching_areas
         @pixels.each do |p|
           paths = @areas[p.area]
           response.insert(response.rindex("</body>"), p.content) if ([:all_pages, :all].include?(p.area) || 
