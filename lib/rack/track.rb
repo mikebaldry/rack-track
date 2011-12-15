@@ -48,7 +48,9 @@ module Rack
       end
     
       def apply(request, response)
-        url = URI::parse(request.url)
+        url = URI::parse(request.url) rescue nil
+        return response if url.nil?
+        
         matching_areas = @areas.find_all { |k, a| a.include? url.path.downcase }.collect { |k, v| k }
         @pixels.each do |p|
           paths = @areas[p.area]

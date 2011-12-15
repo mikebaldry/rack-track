@@ -138,4 +138,9 @@ class TestRackTrack < Test::Unit::TestCase
     get '/'
     assert_equal "90", last_response.headers["Content-Length"]
   end
+  
+  def test_ignores_requests_to_urls_that_uri_cannot_parse
+    #this doesn't work. rack test helpers fail because it's an invalid url.
+    #get '/fancybox/fancybox/+(/^https/i.test(window.location.href||'
+  end
 end
